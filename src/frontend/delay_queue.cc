@@ -4,12 +4,29 @@
 
 #include "delay_queue.hh"
 #include "timestamp.hh"
+#include <random>
 
 using namespace std;
 
-void DelayQueue::read_packet( const string & contents )
-{
-    packet_queue_.emplace( timestamp() + delay_ms_, contents );
+int64_t generateRandomNumber(int bound) {
+    // 创建一个随机数引擎对象
+    static random_device rd;
+    static mt19937 gen(rd());
+
+    // 创建一个整数分布对象，范围为 [-5, 5]
+    static uniform_int_distribution<> dis(-1 * bound, bound);
+
+    // 生成一个随机数，并返回
+    return dis(gen);
+}
+
+void DelayQueue::read_packet( const string & contents)
+{   
+    int64_t random_fluc_ms = fluc_ms_;
+    if(fluc_ms_ > 0){
+        random_fluc_ms = generateRandomNumber(fluc_ms_);
+    }
+    packet_queue_.emplace( timestamp() + delay_ms_ + random_fluc_ms, contents );
 }
 
 void DelayQueue::write_packets( FileDescriptor & fd )

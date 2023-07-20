@@ -26,10 +26,17 @@ int main( int argc, char *argv[] )
         }
 
         const uint64_t delay_ms = myatoi( argv[ 1 ] );
+        int64_t fluc_ms = 0;
+        if(argc == 3){
+            fluc_ms = myatoi(argv[2]);
+        }
+        // uint64_t delay_ms = myatoi( argv[ 1 ] );
 
         vector< string > command;
+        
+        // cout << myatoi( argv[2] ) << endl;
 
-        if ( argc == 2 ) {
+        if ( argc == 2 || argc ==3) {
             command.push_back( shell_path() );
         } else {
             for ( int i = 2; i < argc; i++ ) {
@@ -38,11 +45,11 @@ int main( int argc, char *argv[] )
         }
 
         PacketShell<DelayQueue> delay_shell_app( "delay", user_environment, passthrough_until_signal );
-
+        
         delay_shell_app.start_uplink( "[delay " + to_string( delay_ms ) + " ms] ",
                                       command,
-                                      delay_ms );
-        delay_shell_app.start_downlink( delay_ms );
+                                      delay_ms, fluc_ms);
+        delay_shell_app.start_downlink( delay_ms, fluc_ms);
         return delay_shell_app.wait_for_exit();
     } catch ( const exception & e ) {
         print_exception( e );
