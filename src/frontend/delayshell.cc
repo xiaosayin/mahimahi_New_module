@@ -27,8 +27,13 @@ int main( int argc, char *argv[] )
 
         const uint64_t delay_ms = myatoi( argv[ 1 ] );
         int64_t fluc_ms = 0;
-        if(argc == 3){
-            fluc_ms = myatoi(argv[2]);
+        int arg_next_index = 2;
+        if(argc >= 3){
+            // judge whether number is valid
+            if(argv[2][0] >= '0' && argv[2][0] <= '9'){
+                fluc_ms = myatoi(argv[2]);
+                arg_next_index = 3;
+            }
         }
         // uint64_t delay_ms = myatoi( argv[ 1 ] );
 
@@ -39,7 +44,7 @@ int main( int argc, char *argv[] )
         if ( argc == 2 || argc ==3) {
             command.push_back( shell_path() );
         } else {
-            for ( int i = 2; i < argc; i++ ) {
+            for ( int i = arg_next_index; i < argc; i++ ) {
                 command.push_back( argv[ i ] );
             }
         }
